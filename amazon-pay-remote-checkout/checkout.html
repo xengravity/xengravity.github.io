@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amazon Pay Remote Checkout Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse checkout">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <h1>Amazon Pay Remote Checkout Demo</h1>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>Webstore Checkout</h4>
+                <p>
+                	This page represents the merchant website checkout page.
+                	<ul>
+	                	<li>The customer is already logged into Amazon Pay because we set the amazon_Login_accessToken & amazon_Login_state_cache cookies on the interstitial page</li>
+	                	<li>The address and wallet widgets are pre-populated with the customer default selections</li>
+	                	<li>The item should already be added to the cart at this point</li>
+	                	<li>( The URL parameters in this window are not required and are only used for the purposes of this demo )</li>
+                	</ul>
+					
+                </p>
+                <div class="row">
+                	<div class="col-sm-6"><div id="addressBookWidgetDiv" class="widget"></div></div>
+                	<div class="col-sm-6"><div id="walletWidgetDiv" class="widget"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><button id="submit-order" type="button" class="btn btn-primary">Submit Order</button></div>
+                </div>
+            	
+            </div>
+        </div>
+ 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script async src='https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js'></script>
+
+    <script>
+        // Set Event Listeners
+	    $( '#submit-order' ).on( 'click', function ( ) {
+	    	alert( '$$$' );
+	    })        
+
+	    function getURLParameter( name, source ) {
+	    	return decodeURIComponent( ( new RegExp( '[?|&|#]' + name + '=' + '([^&]+?)(&|#|;|$)' ).exec( source ) || [ , "" ] )[ 1 ].replace( /\+/g, '%20' ) ) || null;
+	    }
+
+	    var accessToken = getURLParameter( 'access_token', location.hash );
+
+	    if ( typeof accessToken === 'string' && accessToken.match( /^Atza/ ) ) {
+	    	document.cookie = 'amazon_Login_accessToken=' + accessToken + ';secure';
+	    }
+
+	    window.onAmazonLoginReady = function ( ) {
+	    	var amazonClientID = getURLParameter( 'amazonClientID', window.location.search );
+	    	
+	    	amazon.Login.setClientId( amazonClientID );
+	    	amazon.Login.setUseCookie( true );
+	    };
+
+	    window.onAmazonPaymentsReady = function ( ) {
+	    	var amazonSellerID = getURLParameter( 'amazonSellerID', window.location.search );
+	    	//console.log( amazonSellerID );
+	    	renderAddressWidget( amazonSellerID );
+
+	    };
+
+
+        // Core Functions
+		function renderAddressWidget( amazonSellerID ) {
+			//console.log( 'renderAddressWidget init' );
+			//console.log( 'via renderAddressWidget init cookie ' + document.cookie );
+
+			new OffAmazonPayments.Widgets.AddressBook( {
+				sellerId: 'AVX6ERM5QT1ZB',
+				onOrderReferenceCreate: function ( orderReference ) {
+					//console.log( 'AddressBook onOrderReferenceCreate' );
+				},
+				onAddressSelect: function ( orderReference ) {
+					//console.log( 'AddressBook onAddressSelect' );
+				},
+		    onOrderReferenceCreate: function ( orderReference ) {
+		        //console.log( 'AddressBook onOrderReferenceCreate triggered' );
+		    },		 		
+				design: {
+					designMode: 'responsive'
+				},
+				onReady: function ( orderReference ) {
+					//console.log( 'AddressBook onReady cookie ' );
+					//console.log( 'via onready' + document.cookie );
+					renderWalletWidget( amazonSellerID );
+				},
+
+				onError: function ( error ) {
+					//console.log( 'AddressBook onError' );
+				}
+			} ).bind( 'addressBookWidgetDiv' );
+		}
+
+		function renderWalletWidget( amazonSellerID) {
+			new OffAmazonPayments.Widgets.Wallet( {
+				sellerId: 'AVX6ERM5QT1ZB',
+				onPaymentSelect: function ( orderReference ) {
+					//console.log( 'Wallet onPaymentSelect' );
+				},
+				design: {
+					designMode: 'responsive'
+				},
+
+				onError: function ( error ) {
+					//console.log( 'Wallet onError' );
+				}
+			} ).bind( 'walletWidgetDiv' );
+		}
+    </script>    
+</body>
+
+</html>

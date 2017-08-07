@@ -1,0 +1,59 @@
+body {
+    background: #f3f3f3;
+}
+
+h1 {
+    color: white;
+    font-size: 30px;
+    font-weight: normal;
+}
+
+h4 {
+    text-transform: uppercase;
+}
+
+td {
+    min-width: 200px;
+}
+
+textarea {
+    border: none;
+    height: 200px;
+    outline: none;
+    width: 100%;
+}
+
+.navbar {
+    border-radius: 0px;
+    color: white;
+}
+
+    .interstitial {
+        background: #4682b4;
+        border-color: #0d3e67;
+    }
+
+    .checkout {
+        background: #008800;
+        border-color: #045204;
+    }
+
+.input-group {
+    margin-bottom: 10px;
+}
+
+    .input-group-addon {
+        min-width: 150px;
+    }
+
+#AmazonPayButton {
+    margin: 20px;
+}
+
+.widget {
+    height: 250px;
+}
+
+.widget:nth-child(1) {
+    margin: 25px 0px;
+}
