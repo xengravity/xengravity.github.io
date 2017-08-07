@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amazon Pay Remote Checkout Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse platform">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <h1>Amazon Pay Remote Checkout Demo</h1>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>Overview</h4>
+                <p>
+                    Amazon Pay Remote Checkout enables platforms to pass client-side data through Amazon Pay to a merchant website.
+                    Platforms can utilize this functionality to log Amazon customers into a remote website and add items to their cart.
+                    This demo covers how Amazon Pay Remote Checkout works from a technical perspective.
+                </p>
+                <p>
+                    <ul>
+                        <li>The platform will host this page</li>
+                        <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
+                        <li>Upon logging in, you will be redirected to the <i>interstitial</i> page</li>
+                        <li>The <i>interstitial</i> page receives data passed from the platform, generates a URL with this data, and redirects the user to the checkout URL</li>
+                        <li>The merchant will need to build functionality to read URL parameters from either the <i>interstitial</i> or <i>checkout</i> page and add the item to the cart</li>
+                    </ul>
+                </p>
+            	<button id="configure-demo" type="button" class="btn btn-primary">Configure Demo</button>
+            </div>
+        </div>
+        <div id="configuration" class="panel panel-default hidden">
+            <div class="panel-body">
+                <h4>Configuration</h4>
+                <p>
+                    Use an Amazon Pay test merchant account by <a href="#" id="sample-data">clicking here</a> to auto-fill the fields below
+                    <strong> OR </strong>
+                    manually configure the field values to use your own Amazon Pay merchant account and URL's.
+                </p>
+                <form>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Amazon Seller ID</span>
+                                <input id="amazon-seller-id" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Amazon Client ID</span>
+                                <input id="amazon-client-id" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Environment</span>
+                                <select id="environment" class="form-control">
+                                    <option value="sandbox">Sandbox</option>
+                                    <option value="production">Production</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Interstitial URL</span>
+                        <input id="interstitial-url" type="text" class="form-control" placeholder="This URL has to be whitelisted under 'Allowed Return URLs' in Seller Central">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Checkout URL</span>
+                        <input id="checkout-url" type="text" class="form-control" placeholder="This URL is the landing page where SKU data will be passed to">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">SKU ID</span>
+                                <input id="sku-id" type="text" class="form-control" placeholder="The item to be added to the cart">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">Misc Parameter</span>
+                                <input id="misc-parameter" type="text" class="form-control" placeholder="Used to pass additional information via parameters for testing">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="configuration-submit" type="button" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div id="demo" class="panel panel-default hidden">
+            <div class="panel-body">
+                
+                <h4>Demo</h4>
+                <p>
+                    The Amazon Pay login button is generated using the information from the configuration process
+                    <ul>
+                        <li>If you are using the sandbox environment, you will need to sign in with a sandbox account</li>
+                        <li>If you are using the production environment, you will need to sign in with a production account</li>
+                        <li>The SKU ID, Misc Parameter, and Access Token will be passed through the OAuth2 state parameter to the <i>interstitial</i> page</li>
+                    </ul>
+                </p>
+                <div class="row">
+                    <div id="AmazonPayButton" class="col-xs-12"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><p>Click the Amazon Pay button to login and add the item to the cart</p></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><button id="logout" type="button" class="btn btn-primary pull-right">Logout</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        // Set Event Listeners
+		$( '#logout' ).on( 'click', function () {
+			 amazon.Login.logout();
+
+		    document.cookie = "amazon_Login_accessToken=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+		    window.location.reload( );
+		});
+
+		$( '#configure-demo' ).on( 'click', function () {
+			$( '#configuration' ).removeClass( 'hidden' ).addClass( 'show' );
+		});	
+
+		$( '#configuration-submit' ).on( 'click', function () {
+			if ( amazonSellerID.val() !== "" && amazonClientID.val() !== "" ) {
+				$( '#demo' ).removeClass( 'hidden' ).addClass( 'show' );
+				loadAmazonPay( environment.val() );
+			}
+		});
+
+		$( '#sample-data' ).on( 'click', function () {
+			insertSampleData();
+		});		
+
+
+		// Cache Selectors
+		var amazonSellerID 	= $( '#amazon-seller-id' );
+		var amazonClientID 	= $( '#amazon-client-id' );
+		var environment 	= $( '#environment' );
+		var interstitialURL = $( '#interstitial-url' );
+		var checkoutURL 	= $( '#checkout-url' );
+		var skuID 			= $( '#sku-id' );
+		var miscParameter 	= $( '#misc-parameter' );
+
+
+        // Core Functions
+		function insertSampleData ( ) {
+			amazonSellerID.val( 'AVX6ERM5QT1ZB' );
+			amazonClientID.val( 'amzn1.application-oa2-client.4b79645ecb0d41ef92b23e50a9c4e691' );
+			environment.val( 'sandbox' );
+			interstitialURL.val( 'https://htmlpreview.github.io/?https://github.com/xengravity/amazon-pay-remote-checkout/blob/master/interstitial.html' );
+			checkoutURL.val( 'https://htmlpreview.github.io/?https://github.com/xengravity/amazon-pay-remote-checkout/blob/master/checkout.html' );
+			skuID.val( '12345' );
+			miscParameter.val( 'ABCDEFG' );
+		}	
+
+        function showButton( amazonSellerID, interstitialURL, paramValueEncoded ) {
+            var authRequest;
+            OffAmazonPayments.Button("AmazonPayButton", amazonSellerID, {
+                type: "PwA",
+                color: "Gold",
+                size: "medium",
+
+                authorization: function() {
+                    loginOptions = {
+                        scope: "profile payments:widget payments:shipping_address",
+                        popup: false,
+                        state: paramValueEncoded
+                    };
+                    authRequest = amazon.Login.authorize(loginOptions, interstitialURL );
+                },
+
+                onError: function(error) {
+                    console.log('error');
+                }
+            });
+            console.log( 'merchant id = ' + amazonSellerID );
+        };
+
+        function loadAmazonPay ( environment ) {
+	        window.onAmazonLoginReady = function() {
+	            amazon.Login.setClientId( amazonClientID.val() );
+	            amazon.Login.setUseCookie( true );
+	            console.log('client id = ' + amazonClientID.val() );
+	        };
+
+			window.onAmazonPaymentsReady = function() {
+				var paramValueEncoded = '';
+
+				paramValueEncoded += '?skuID=' + skuID.val() + '&amazonClientID=' + amazonClientID.val() +' &amazonSellerID=' + amazonSellerID.val() + '&environment=' + environment + '&checkoutURL=' + checkoutURL.val() + '&miscParameter=' + miscParameter.val(); 
+				paramValueEncoded = encodeURIComponent( paramValueEncoded );
+
+			    showButton( amazonSellerID.val(), interstitialURL.val(), paramValueEncoded );
+			};   
+			     	
+        	if( environment === 'production' ) {
+        		var src = 'https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js';
+        	} else {
+        		var src = 'https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js';
+        	}
+
+            $.getScript( src, function () {
+                console.log( 'environment = ' + environment );
+            });
+        }
+	</script>
+</body>
+
+</html>
