@@ -2,6 +2,10 @@
     max-width: 1000px;  
     }
 
+.navbar-header {
+    margin-left: 0px !important; /* Overrides BS default -15px at XS BP */
+}
+
 body {
     background: #f3f3f3;
 }
