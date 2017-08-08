@@ -29,8 +29,8 @@
                 <p>
                     <ul>
                         <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
-                        <li>Upon logging in, you will be redirected to the <i>interstitial</i> page</li>
-                        <li>The <i>interstitial</i> page receives data passed from the platform, generates a URL with this data, and redirects to the merchant's checkout URL</li>
+                        <li>Once logging in, you will be redirected to the <i>interstitial</i> page</li>
+                        <li>The <i>interstitial</i> page receives data passed from the platform, generates a URL with the data, and redirects to the merchant's checkout URL</li>
                         <li>The merchant will need to build functionality to read URL parameters from either the <i>interstitial</i> or <i>checkout</i> page and add the item to the cart</li>
                     </ul>
                 </p>
@@ -87,7 +87,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="input-group">
                                 <span class="input-group-addon">Misc Parameter</span>
-                                <input id="misc-parameter" type="text" class="form-control" placeholder="Used to pass additional information via parameters for testing">
+                                <input id="misc-parameter" type="text" class="form-control" placeholder="Pass additional information via parameters">
                             </div>
                         </div>
                     </div>
@@ -100,12 +100,12 @@
                 
                 <h4>Demo</h4>
                 <p>
-                    The Amazon Pay login button is generated using the information from the configuration process
+                    The Amazon Pay login button below is generated using the information from the configuration process
                     <ul>
-                        <li>The platform will host this page and the logic to pass data to Amazon Pay</li>
+                        <li>The platform will host this page and the logic to render the button and pass data to Amazon Pay</li>
+                        <li>The SKU ID, Misc Parameter, and Access Token will be passed through the OAuth2 state parameter to the <i>interstitial</i> page</li>
                         <li>If you are using the sandbox environment, you will need to sign in with a sandbox account</li>
                         <li>If you are using the production environment, you will need to sign in with a production account</li>
-                        <li>The SKU ID, Misc Parameter, and Access Token will be passed through the OAuth2 state parameter to the <i>interstitial</i> page</li>
                     </ul>
                 </p>
                 <div class="row">
