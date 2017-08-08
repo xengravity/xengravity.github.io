@@ -23,15 +23,14 @@
                 <h4>Overview</h4>
                 <p>
                     Amazon Pay Remote Checkout enables platforms to pass client-side data through Amazon Pay to a merchant website.
-                    Platforms can utilize this functionality to log Amazon customers into a remote website and add items to their cart.
-                    This demo covers how Amazon Pay Remote Checkout works from a technical perspective.
+                    Platforms can utilize this functionality to log Amazon customers into a remote website and programmatically add items to their cart.
+                    This demo covers how Amazon Pay Remote Checkout works from a technical perspective and provides sample code.
                 </p>
                 <p>
                     <ul>
-                        <li>The platform will host this page</li>
                         <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
                         <li>Upon logging in, you will be redirected to the <i>interstitial</i> page</li>
-                        <li>The <i>interstitial</i> page receives data passed from the platform, generates a URL with this data, and redirects the user to the checkout URL</li>
+                        <li>The <i>interstitial</i> page receives data passed from the platform, generates a URL with this data, and redirects to the merchant's checkout URL</li>
                         <li>The merchant will need to build functionality to read URL parameters from either the <i>interstitial</i> or <i>checkout</i> page and add the item to the cart</li>
                     </ul>
                 </p>
@@ -103,6 +102,7 @@
                 <p>
                     The Amazon Pay login button is generated using the information from the configuration process
                     <ul>
+                        <li>The platform will host this page and the logic to pass data to Amazon Pay</li>
                         <li>If you are using the sandbox environment, you will need to sign in with a sandbox account</li>
                         <li>If you are using the production environment, you will need to sign in with a production account</li>
                         <li>The SKU ID, Misc Parameter, and Access Token will be passed through the OAuth2 state parameter to the <i>interstitial</i> page</li>
@@ -162,8 +162,8 @@
 			amazonSellerID.val( 'AVX6ERM5QT1ZB' );
 			amazonClientID.val( 'amzn1.application-oa2-client.4b79645ecb0d41ef92b23e50a9c4e691' );
 			environment.val( 'sandbox' );
-			interstitialURL.val( 'https://htmlpreview.github.io/?https://github.com/xengravity/amazon-pay-remote-checkout/blob/master/interstitial.html' );
-			checkoutURL.val( 'https://htmlpreview.github.io/?https://github.com/xengravity/amazon-pay-remote-checkout/blob/master/checkout.html' );
+			interstitialURL.val( 'https://xengravity.github.io/amazon-pay-remote-checkout/interstitial.html' );
+			checkoutURL.val( 'https://xengravity.github.io/amazon-pay-remote-checkout/checkout.html' );
 			skuID.val( '12345' );
 			miscParameter.val( 'ABCDEFG' );
 		}	
